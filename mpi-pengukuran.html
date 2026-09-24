@@ -1,0 +1,1039 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MPI IPA Kelas 8 - Sistem Pengukuran</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, sans-serif; -webkit-tap-highlight-color: transparent; }
+  
+  body {
+    background: linear-gradient(135deg, #1e3c72 0%, #2a5298 50%, #6a82fb 100%);
+    min-height: 100vh;
+    padding: 20px;
+    color: #333;
+    overflow-x: hidden;
+  }
+
+  .container { max-width: 1000px; margin: 0 auto; }
+
+  header { text-align: center; color: white; margin-bottom: 25px; animation: slideDown 0.6s ease; }
+
+  header h1 {
+    font-size: 1.8rem;
+    margin-bottom: 8px;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+  }
+  header p { font-size: 1rem; opacity: 0.9; }
+
+  @keyframes slideDown {
+    from { opacity: 0; transform: translateY(-20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* MENU */
+  .menu {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+    gap: 12px;
+    margin-bottom: 25px;
+  }
+
+  .menu-btn {
+    background: white;
+    border: none;
+    padding: 16px 8px;
+    border-radius: 12px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #1e3c72;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .menu-btn .icon { font-size: 1.5rem; transition: transform 0.3s; }
+  .menu-btn:hover { transform: translateY(-4px) scale(1.03); box-shadow: 0 8px 18px rgba(0,0,0,0.25); background: #ffd93d; }
+  .menu-btn:hover .icon { transform: scale(1.2) rotate(-8deg); }
+  .menu-btn.active { background: #ffd93d; transform: translateY(-2px); box-shadow: 0 6px 16px rgba(255,217,61,0.6); }
+
+  /* KONTEN */
+  .content {
+    background: white;
+    border-radius: 16px;
+    padding: 28px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    min-height: 400px;
+    animation: fadeIn 0.4s ease;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .section { display: none; }
+  .section.active { display: block; animation: fadeIn 0.5s ease; }
+
+  .section h2 {
+    color: #1e3c72;
+    border-bottom: 3px solid #ffd93d;
+    padding-bottom: 10px;
+    margin-bottom: 18px;
+    font-size: 1.4rem;
+  }
+
+  .section h3 { color: #2a5298; margin: 18px 0 10px; font-size: 1.1rem; }
+  .section p, .section li { line-height: 1.7; margin-bottom: 8px; }
+  .section ul, .section ol { padding-left: 22px; margin-bottom: 12px; }
+
+  /* SVG GAMBAR ALAT UKUR */
+  .svg-gallery {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 16px;
+    margin: 18px 0;
+  }
+
+  .svg-card {
+    background: #f4f6fb;
+    border-radius: 12px;
+    padding: 14px;
+    text-align: center;
+    border: 2px solid #e0e6f5;
+    transition: all 0.3s;
+  }
+
+  .svg-card:hover { transform: translateY(-4px); border-color: #6a82fb; box-shadow: 0 8px 16px rgba(106,130,251,0.2); }
+  .svg-card svg { width: 100%; height: auto; max-height: 130px; }
+  .svg-card p { font-size: 0.85rem; font-weight: 600; color: #1e3c72; margin-top: 8px; }
+  .svg-card small { font-size: 0.75rem; color: #666; display: block; margin-top: 2px; }
+
+  /* APERSEPSI */
+  .card-penasaran {
+    background: linear-gradient(135deg, #fff5e1, #ffe0b2);
+    border-left: 5px solid #ff9800;
+    padding: 14px 18px;
+    margin-bottom: 12px;
+    border-radius: 8px;
+    font-size: 1rem;
+    transition: transform 0.3s;
+  }
+  .card-penasaran:hover { transform: translateX(6px); }
+
+  /* TABEL */
+  table { width: 100%; border-collapse: collapse; margin: 12px 0; font-size: 0.9rem; }
+  th, td { padding: 10px; border: 1px solid #ddd; text-align: left; }
+  th { background: #1e3c72; color: white; }
+  tr:nth-child(even) { background: #f4f6fb; }
+
+  /* GRAFIK */
+  .bar-chart { margin: 15px 0; }
+  .bar-row { display: flex; align-items: center; margin-bottom: 8px; gap: 10px; }
+  .bar-label { width: 140px; font-size: 0.85rem; font-weight: 600; }
+  .bar { height: 22px; border-radius: 5px; transition: width 1.2s cubic-bezier(0.4, 0, 0.2, 1); }
+
+  /* ASESMEN AWAL */
+  .self-check {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 10px 14px; background: #f4f6fb; border-radius: 8px;
+    margin-bottom: 8px; flex-wrap: wrap; gap: 8px;
+  }
+  .self-check span { flex: 1; min-width: 200px; font-size: 0.9rem; }
+
+  .tri-btn { display: flex; gap: 6px; }
+  .tri-btn button {
+    border: 2px solid #ccc; background: white; padding: 5px 10px;
+    border-radius: 6px; cursor: pointer; font-size: 0.8rem; transition: all 0.2s;
+  }
+  .tri-btn button:hover { border-color: #1e3c72; transform: scale(1.05); }
+  .tri-btn button.selected { background: #1e3c72; color: white; border-color: #1e3c72; }
+
+  /* KUIS */
+  .quiz-q { background: #f4f6fb; padding: 16px; border-radius: 10px; margin-bottom: 14px; }
+  .quiz-q p { font-weight: 600; margin-bottom: 10px; }
+  .quiz-opt {
+    display: block; width: 100%; text-align: left; padding: 9px 14px;
+    margin-bottom: 6px; border: 2px solid #ddd; background: white;
+    border-radius: 8px; cursor: pointer; transition: all 0.2s; font-size: 0.9rem;
+  }
+  .quiz-opt:hover:not(:disabled) { border-color: #6a82fb; background: #eef2ff; transform: translateX(4px); }
+  .quiz-opt.correct { background: #c8e6c9; border-color: #4caf50; }
+  .quiz-opt.wrong { background: #ffcdd2; border-color: #f44336; }
+  .quiz-opt:disabled { cursor: not-allowed; }
+
+  .feedback {
+    margin-top: 8px; font-size: 0.88rem; font-weight: 600;
+    padding: 8px 12px; border-radius: 6px; display: none;
+  }
+  .feedback.show { display: block; animation: fadeIn 0.3s; }
+  .feedback.ok { background: #c8e6c9; color: #2e7d32; }
+  .feedback.no { background: #ffcdd2; color: #c62828; }
+
+  /* TOMBOL */
+  .btn {
+    background: linear-gradient(135deg, #1e3c72, #6a82fb); color: white;
+    border: none; padding: 11px 22px; border-radius: 8px; cursor: pointer;
+    font-size: 0.95rem; font-weight: 600; transition: all 0.3s;
+    margin-top: 12px; box-shadow: 0 4px 10px rgba(30,60,114,0.3);
+  }
+  .btn:hover { transform: translateY(-2px); box-shadow: 0 6px 16px rgba(30,60,114,0.5); }
+  .btn:active { transform: translateY(0); }
+  .btn.yellow { background: linear-gradient(135deg, #ffd93d, #ff9800); color: #333; }
+
+  /* SIMULASI */
+  .sim-box {
+    background: #f4f6fb; padding: 20px; border-radius: 12px;
+    margin-bottom: 16px; border-left: 5px solid #6a82fb;
+  }
+  .sim-box label { display: block; margin-bottom: 6px; font-weight: 600; font-size: 0.9rem; }
+  .sim-box input[type="range"] { width: 100%; margin-bottom: 10px; accent-color: #1e3c72; cursor: pointer; }
+  .sim-box input[type="number"] {
+    padding: 8px; border: 2px solid #ddd; border-radius: 6px;
+    font-size: 0.95rem; width: 120px; transition: border-color 0.2s;
+  }
+  .sim-box input[type="number"]:focus { outline: none; border-color: #6a82fb; }
+
+  .sim-result {
+    background: white; padding: 12px; border-radius: 8px;
+    font-weight: 700; color: #1e3c72; font-size: 1.05rem;
+    margin-top: 10px; border: 2px dashed #6a82fb;
+    transition: all 0.3s;
+  }
+
+  /* SKOR & SERTIFIKAT */
+  .score-box {
+    text-align: center; padding: 20px;
+    background: linear-gradient(135deg, #ffd93d, #ff9800);
+    border-radius: 12px; margin-top: 16px;
+    font-size: 1.2rem; font-weight: 700; color: #333;
+    display: none; animation: pop 0.5s ease;
+  }
+  .score-box.show { display: block; }
+
+  @keyframes pop {
+    0% { transform: scale(0.7); opacity: 0; }
+    70% { transform: scale(1.05); }
+    100% { transform: scale(1); opacity: 1; }
+  }
+
+  .cert-box {
+    display: none;
+    margin-top: 20px;
+    padding: 25px;
+    background: linear-gradient(135deg, #fffbe6, #fff5c2);
+    border: 4px double #d4af37;
+    border-radius: 16px;
+    text-align: center;
+    animation: certPop 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 10px 30px rgba(212,175,55,0.4);
+  }
+  .cert-box.show { display: block; }
+
+  @keyframes certPop {
+    0% { transform: scale(0.5) rotate(-5deg); opacity: 0; }
+    60% { transform: scale(1.05) rotate(2deg); }
+    100% { transform: scale(1) rotate(0); opacity: 1; }
+  }
+
+  .cert-box h3 {
+    color: #b8860b;
+    font-size: 1.5rem;
+    margin-bottom: 8px;
+    letter-spacing: 2px;
+  }
+  .cert-box .medal { font-size: 3.5rem; margin: 10px 0; animation: shine 2s infinite; }
+  @keyframes shine {
+    0%, 100% { transform: scale(1) rotate(0); filter: drop-shadow(0 0 5px gold); }
+    50% { transform: scale(1.15) rotate(8deg); filter: drop-shadow(0 0 20px gold); }
+  }
+  .cert-box .name { font-size: 1.2rem; font-weight: 700; color: #1e3c72; margin: 10px 0; }
+  .cert-box .score-text { font-size: 1.1rem; color: #333; margin: 8px 0; }
+  .cert-box .date { font-size: 0.85rem; color: #666; margin-top: 12px; font-style: italic; }
+
+  /* REFLEKSI */
+  .reflect-item { margin-bottom: 14px; padding: 12px; background: #f4f6fb; border-radius: 8px; }
+  .reflect-item label { display: block; margin-bottom: 6px; font-weight: 600; font-size: 0.92rem; }
+  .reflect-item textarea, .reflect-item input[type="text"] {
+    width: 100%; padding: 9px; border: 2px solid #ddd;
+    border-radius: 6px; font-size: 0.9rem; font-family: inherit;
+    resize: vertical; transition: border-color 0.2s;
+  }
+  .reflect-item textarea:focus, .reflect-item input:focus {
+    outline: none; border-color: #6a82fb; box-shadow: 0 0 0 3px rgba(106,130,251,0.15);
+  }
+
+  .emoji-row { display: flex; gap: 10px; flex-wrap: wrap; }
+  .emoji-btn {
+    font-size: 1.8rem; background: white; border: 2px solid #ddd;
+    border-radius: 10px; padding: 6px 12px; cursor: pointer; transition: all 0.3s;
+  }
+  .emoji-btn:hover { transform: scale(1.15); border-color: #6a82fb; }
+  .emoji-btn.selected { background: #ffd93d; border-color: #ff9800; transform: scale(1.15); }
+
+  .check-item {
+    display: flex; align-items: center; gap: 10px;
+    padding: 8px 12px; background: #f4f6fb; border-radius: 8px;
+    margin-bottom: 8px; cursor: pointer; font-size: 0.92rem;
+    transition: background 0.2s;
+  }
+  .check-item:hover { background: #e8eefc; }
+  .check-item input { width: 18px; height: 18px; accent-color: #1e3c72; cursor: pointer; }
+
+  .note {
+    background: #fff9c4; border-left: 5px solid #fbc02d;
+    padding: 12px 16px; border-radius: 8px; margin: 14px 0; font-size: 0.92rem;
+  }
+
+  .saved-badge {
+    display: inline-block; background: #4caf50; color: white;
+    padding: 3px 10px; border-radius: 20px; font-size: 0.72rem;
+    font-weight: 600; margin-left: 8px; opacity: 0;
+    transition: opacity 0.4s;
+  }
+  .saved-badge.show { opacity: 1; }
+
+  /* MOBILE */
+  @media (max-width: 600px) {
+    body { padding: 12px; }
+    header h1 { font-size: 1.25rem; }
+    header p { font-size: 0.85rem; }
+    .content { padding: 18px; border-radius: 12px; }
+    .section h2 { font-size: 1.15rem; }
+    .menu { grid-template-columns: repeat(2, 1fr); gap: 8px; }
+    .menu-btn { padding: 12px 6px; font-size: 0.8rem; }
+    .menu-btn .icon { font-size: 1.3rem; }
+    .bar-label { width: 90px; font-size: 0.75rem; }
+    .svg-gallery { grid-template-columns: 1fr; }
+    table { font-size: 0.78rem; }
+    th, td { padding: 6px; }
+    .quiz-opt { font-size: 0.85rem; padding: 8px 10px; }
+    .btn { width: 100%; }
+    .self-check { flex-direction: column; align-items: flex-start; }
+    .tri-btn { width: 100%; justify-content: space-between; }
+    .tri-btn button { flex: 1; font-size: 0.75rem; }
+  }
+
+  /* SCROLLBAR */
+  ::-webkit-scrollbar { width: 10px; }
+  ::-webkit-scrollbar-track { background: #f1f1f1; }
+  ::-webkit-scrollbar-thumb { background: #6a82fb; border-radius: 5px; }
+  ::-webkit-scrollbar-thumb:hover { background: #1e3c72; }
+</style>
+</head>
+<body>
+<div class="container">
+  <header>
+    <h1>📚 MPI IPA Kelas 8</h1>
+    <p>Sistem Pengukuran terhadap Aspek Fisis</p>
+  </header>
+
+  <div class="menu">
+    <button class="menu-btn active" onclick="showSection('apersepsi', this)"><span class="icon">🔍</span>Apersepsi</button>
+    <button class="menu-btn" onclick="showSection('awal', this)"><span class="icon">📝</span>Asesmen Awal</button>
+    <button class="menu-btn" onclick="showSection('materi', this)"><span class="icon">📖</span>Materi Pokok</button>
+    <button class="menu-btn" onclick="showSection('simulasi', this)"><span class="icon">🧪</span>Simulasi</button>
+    <button class="menu-btn" onclick="showSection('kuis', this)"><span class="icon">❓</span>Kuis</button>
+    <button class="menu-btn" onclick="showSection('akhir', this)"><span class="icon">📊</span>Asesmen Akhir</button>
+    <button class="menu-btn" onclick="showSection('refleksi', this)"><span class="icon">💭</span>Refleksi</button>
+  </div>
+
+  <div class="content">
+
+    <!-- 1. APERSEPSI -->
+    <div id="apersepsi" class="section active">
+      <h2>🔍 Apersepsi — Ayo Berpikir!</h2>
+      <p><em>Tujuan: memancing rasa penasaran, bukan menjelaskan.</em></p>
+      <div class="card-penasaran">🤔 Pernahkah kamu mengukur tinggi badanmu? Angkanya <b>5</b> atau <b>150</b>? Kok bisa beda?</div>
+      <div class="card-penasaran">🥤 Kalau kamu tuang air ke gelas ukur, kenapa permukaan air terlihat <b>melengkung</b> di tepinya?</div>
+      <div class="card-penasaran">🌡️ Termometer menunjukkan <b>38°C</b>. Apa artinya? Apakah pasti "panas"?</div>
+      <div class="card-penasaran">📏 Dua siswa mengukur meja yang sama: <b>120,5 cm</b> dan <b>121 cm</b>. Kok bisa berbeda?</div>
+      <div class="card-penasaran">⚖️ Mana yang lebih berat: <b>1 kg kapas</b> atau <b>1 kg besi</b>? Mengapa banyak yang tertipu?</div>
+      <div class="note">✏️ <b>Tantangan:</b> Tulis 1 pertanyaan yang muncul di kepalamu di buku catatan. Kita akan jawab bersama di akhir pelajaran!</div>
+    </div>
+
+    <!-- 2. ASESMEN AWAL -->
+    <div id="awal" class="section">
+      <h2>📝 Asesmen Awal</h2>
+      <p>Jawab dengan jujur — <b>bukan untuk dinilai</b>, hanya untuk mengukur pemahaman awalmu. Jawabanmu otomatis tersimpan.</p>
+      <div id="awal-list"></div>
+      <div class="note">💡 Tidak apa-apa jika belum tahu! Justru itu tujuan kita belajar hari ini.</div>
+    </div>
+
+    <!-- 3. MATERI -->
+    <div id="materi" class="section">
+      <h2>📖 Materi Pokok</h2>
+
+      <h3>A. Pengukuran & Besaran</h3>
+      <ul>
+        <li><b>Pengukuran</b> = membandingkan nilai besaran dengan satuan baku.</li>
+        <li><b>Besaran</b> = sesuatu yang dapat diukur dan dinyatakan dengan angka.</li>
+        <li><b>Besaran Pokok (7):</b> Panjang, Massa, Waktu, Suhu, Kuat Arus, Intensitas Cahaya, Jumlah Zat.</li>
+        <li><b>Besaran Turunan:</b> Luas, Volume, Kecepatan, Massa Jenis, dll.</li>
+      </ul>
+
+      <table>
+        <tr><th>Besaran</th><th>Satuan SI</th><th>Simbol</th><th>Alat Ukur</th></tr>
+        <tr><td>Panjang</td><td>meter</td><td>m</td><td>Penggaris, Jangka Sorong, Mikrometer</td></tr>
+        <tr><td>Massa</td><td>kilogram</td><td>kg</td><td>Neraca</td></tr>
+        <tr><td>Waktu</td><td>sekon</td><td>s</td><td>Stopwatch</td></tr>
+        <tr><td>Suhu</td><td>Kelvin</td><td>K</td><td>Termometer</td></tr>
+        <tr><td>Kuat Arus</td><td>ampere</td><td>A</td><td>Amperemeter</td></tr>
+        <tr><td>Intensitas Cahaya</td><td>kandela</td><td>cd</td><td>Fotometer</td></tr>
+        <tr><td>Jumlah Zat</td><td>mol</td><td>mol</td><td>—</td></tr>
+      </table>
+
+      <h3>B. Alat Ukur Panjang</h3>
+
+      <!-- SVG ALAT UKUR -->
+      <div class="svg-gallery">
+        <!-- PENGGARIS -->
+        <div class="svg-card">
+          <svg viewBox="0 0 200 80" xmlns="http://www.w3.org/2000/svg">
+            <rect x="10" y="20" width="180" height="40" rx="4" fill="#fff9c4" stroke="#fbc02d" stroke-width="2"/>
+            <line x1="30" y1="20" x2="30" y2="35" stroke="#333" stroke-width="1.5"/>
+            <line x1="50" y1="20" x2="50" y2="30" stroke="#333" stroke-width="1"/>
+            <line x1="70" y1="20" x2="70" y2="35" stroke="#333" stroke-width="1.5"/>
+            <line x1="90" y1="20" x2="90" y2="30" stroke="#333" stroke-width="1"/>
+            <line x1="110" y1="20" x2="110" y2="35" stroke="#333" stroke-width="1.5"/>
+            <line x1="130" y1="20" x2="130" y2="30" stroke="#333" stroke-width="1"/>
+            <line x1="150" y1="20" x2="150" y2="35" stroke="#333" stroke-width="1.5"/>
+            <line x1="170" y1="20" x2="170" y2="30" stroke="#333" stroke-width="1"/>
+            <text x="28" y="50" font-size="8" fill="#333">1</text>
+            <text x="68" y="50" font-size="8" fill="#333">2</text>
+            <text x="108" y="50" font-size="8" fill="#333">3</text>
+            <text x="148" y="50" font-size="8" fill="#333">4</text>
+          </svg>
+          <p>📏 Penggaris</p>
+          <small>Ketelitian: 1 mm</small>
+        </div>
+
+        <!-- JANGKA SORONG -->
+        <div class="svg-card">
+          <svg viewBox="0 0 200 100" xmlns="http://www.w3.org/2000/svg">
+            <rect x="10" y="25" width="180" height="12" fill="#cfd8dc" stroke="#546e7a" stroke-width="1.5" rx="2"/>
+            <line x1="30" y1="25" x2="30" y2="40" stroke="#333" stroke-width="1"/>
+            <line x1="50" y1="25" x2="50" y2="40" stroke="#333" stroke-width="1"/>
+            <line x1="70" y1="25" x2="70" y2="40" stroke="#333" stroke-width="1"/>
+            <line x1="90" y1="25" x2="90" y2="40" stroke="#333" stroke-width="1"/>
+            <line x1="110" y1="25" x2="110" y2="40" stroke="#333" stroke-width="1"/>
+            <line x1="130" y1="25" x2="130" y2="40" stroke="#333" stroke-width="1"/>
+            <line x1="150" y1="25" x2="150" y2="40" stroke="#333" stroke-width="1"/>
+            <rect x="60" y="42" width="90" height="18" fill="#90a4ae" stroke="#546e7a" stroke-width="1.5" rx="2"/>
+            <line x1="65" y1="42" x2="65" y2="52" stroke="#fff" stroke-width="1"/>
+            <line x1="75" y1="42" x2="75" y2="52" stroke="#fff" stroke-width="1"/>
+            <line x1="85" y1="42" x2="85" y2="52" stroke="#fff" stroke-width="1"/>
+            <line x1="95" y1="42" x2="95" y2="52" stroke="#fff" stroke-width="1"/>
+            <line x1="105" y1="42" x2="105" y2="52" stroke="#fff" stroke-width="1"/>
+            <line x1="115" y1="42" x2="115" y2="52" stroke="#fff" stroke-width="1"/>
+            <line x1="125" y1="42" x2="125" y2="52" stroke="#fff" stroke-width="1"/>
+            <line x1="135" y1="42" x2="135" y2="52" stroke="#fff" stroke-width="1"/>
+            <rect x="55" y="60" width="8" height="30" fill="#546e7a" rx="2"/>
+            <rect x="147" y="60" width="8" height="30" fill="#546e7a" rx="2"/>
+          </svg>
+          <p>🔬 Jangka Sorong</p>
+          <small>Ketelitian: 0,1 mm</small>
+        </div>
+
+        <!-- MIKROMETER -->
+        <div class="svg-card">
+          <svg viewBox="0 0 200 100" xmlns="http://www.w3.org/2000/svg">
+            <rect x="20" y="40" width="100" height="20" fill="#b0bec5" stroke="#546e7a" stroke-width="1.5" rx="3"/>
+            <line x1="40" y1="40" x2="40" y2="52" stroke="#333" stroke-width="1"/>
+            <line x1="60" y1="40" x2="60" y2="52" stroke="#333" stroke-width="1"/>
+            <line x1="80" y1="40" x2="80" y2="52" stroke="#333" stroke-width="1"/>
+            <line x1="100" y1="40" x2="100" y2="52" stroke="#333" stroke-width="1"/>
+            <circle cx="140" cy="50" r="22" fill="#78909c" stroke="#455a64" stroke-width="1.5"/>
+            <circle cx="140" cy="50" r="14" fill="#cfd8dc"/>
+            <line x1="140" y1="30" x2="140" y2="42" stroke="#333" stroke-width="2"/>
+            <line x1="140" y1="50" x2="150" y2="50" stroke="#333" stroke-width="1"/>
+            <line x1="140" y1="50" x2="146" y2="56" stroke="#333" stroke-width="1"/>
+            <rect x="0" y="42" width="20" height="16" fill="#546e7a" rx="2"/>
+            <path d="M 0 50 L -8 50" stroke="#333" stroke-width="2"/>
+          </svg>
+          <p>⚙️ Mikrometer Sekrup</p>
+          <small>Ketelitian: 0,01 mm</small>
+        </div>
+
+        <!-- NERACA OHAUS -->
+        <div class="svg-card">
+          <svg viewBox="0 0 200 120" xmlns="http://www.w3.org/2000/svg">
+            <rect x="60" y="90" width="80" height="15" fill="#8d6e63" rx="3"/>
+            <rect x="95" y="60" width="10" height="35" fill="#a1887f"/>
+            <line x1="30" y1="55" x2="170" y2="55" stroke="#5d4037" stroke-width="3"/>
+            <line x1="30" y1="55" x2="30" y2="65" stroke="#5d4037" stroke-width="1.5"/>
+            <line x1="170" y1="55" x2="170" y2="65" stroke="#5d4037" stroke-width="1.5"/>
+            <rect x="15" y="65" width="30" height="10" fill="#b0bec5" stroke="#546e7a" rx="2"/>
+            <rect x="155" y="65" width="30" height="10" fill="#b0bec5" stroke="#546e7a" rx="2"/>
+            <line x1="30" y1="65" x2="30" y2="78" stroke="#546e7a" stroke-width="1"/>
+            <line x1="170" y1="65" x2="170" y2="78" stroke="#546e7a" stroke-width="1"/>
+            <circle cx="100" cy="55" r="4" fill="#5d4037"/>
+          </svg>
+          <p>⚖️ Neraca Ohaus</p>
+          <small>Ketelitian: 0,01 g</small>
+        </div>
+
+        <!-- TERMOMETER -->
+        <div class="svg-card">
+          <svg viewBox="0 0 100 150" xmlns="http://www.w3.org/2000/svg">
+            <rect x="40" y="20" width="20" height="90" rx="10" fill="#e3f2fd" stroke="#1976d2" stroke-width="2"/>
+            <circle cx="50" cy="120" r="18" fill="#f44336" stroke="#b71c1c" stroke-width="2"/>
+            <rect x="44" y="50" width="12" height="70" fill="#f44336" rx="6"/>
+            <line x1="60" y1="30" x2="70" y2="30" stroke="#333" stroke-width="1"/>
+            <line x1="60" y1="45" x2="70" y2="45" stroke="#333" stroke-width="1"/>
+            <line x1="60" y1="60" x2="70" y2="60" stroke="#333" stroke-width="1"/>
+            <line x1="60" y1="75" x2="70" y2="75" stroke="#333" stroke-width="1"/>
+            <line x1="60" y1="90" x2="70" y2="90" stroke="#333" stroke-width="1"/>
+            <text x="72" y="33" font-size="7" fill="#333">40</text>
+            <text x="72" y="63" font-size="7" fill="#333">30</text>
+            <text x="72" y="93" font-size="7" fill="#333">20</text>
+          </svg>
+          <p>🌡️ Termometer</p>
+          <small>Satuan: °C, °F, K</small>
+        </div>
+
+        <!-- STOPWATCH -->
+        <div class="svg-card">
+          <svg viewBox="0 0 120 140" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="60" cy="75" r="45" fill="#fff" stroke="#37474f" stroke-width="3"/>
+            <circle cx="60" cy="75" r="38" fill="#eceff1"/>
+            <rect x="55" y="20" width="10" height="10" fill="#37474f"/>
+            <rect x="85" y="35" width="10" height="15" fill="#546e7a" rx="2"/>
+            <line x1="60" y1="75" x2="60" y2="45" stroke="#333" stroke-width="2"/>
+            <line x1="60" y1="75" x2="85" y2="75" stroke="#f44336" stroke-width="1.5"/>
+            <circle cx="60" cy="75" r="3" fill="#333"/>
+            <line x1="60" y1="38" x2="60" y2="42" stroke="#333" stroke-width="1"/>
+            <line x1="97" y1="75" x2="93" y2="75" stroke="#333" stroke-width="1"/>
+            <line x1="60" y1="112" x2="60" y2="108" stroke="#333" stroke-width="1"/>
+            <line x1="23" y1="75" x2="27" y2="75" stroke="#333" stroke-width="1"/>
+          </svg>
+          <p>⏱️ Stopwatch</p>
+          <small>Ketelitian: 0,01 s</small>
+        </div>
+      </div>
+
+      <h3>C. Alat Ukur Massa</h3>
+      <ul>
+        <li><b>Neraca Ohaus</b> (3 lengan) → ketelitian 0,01 g</li>
+        <li><b>Neraca Digital</b> → lebih presisi</li>
+        <li><b>Timbangan Pasar</b> → kurang presisi</li>
+      </ul>
+      <div class="note">⚠️ <b>Massa ≠ Berat:</b> Massa = jumlah materi (kg), sama di mana saja. Berat = gaya gravitasi (Newton), berubah di bulan!</div>
+
+      <h3>D. Cara Baca Jangka Sorong</h3>
+      <p><b>Rumus:</b> Skala Utama + (Skala Nonius × 0,01) cm</p>
+      <div class="note">📌 Contoh: Skala utama = 2,4 cm | Skala nonius = 7<br>Hasil = 2,4 + (7 × 0,01) = <b>2,47 cm</b></div>
+
+      <h3>E. Alat Ukur Waktu</h3>
+      <ul>
+        <li>Stopwatch analog (ketelitian 0,1 s) & digital (ketelitian 0,01 s)</li>
+      </ul>
+
+      <h3>F. Suhu & Konversi</h3>
+      <p><b>Perbandingan skala:</b> C : R : F : K = 5 : 4 : 9(+32) : 5(+273)</p>
+
+      <div class="bar-chart">
+        <p><b>📈 Rentang Skala Suhu:</b></p>
+        <div class="bar-row"><span class="bar-label">Celsius (0–100)</span><div class="bar" style="width: 50%; background: linear-gradient(90deg,#2196f3,#0d47a1);"></div></div>
+        <div class="bar-row"><span class="bar-label">Reaumur (0–80)</span><div class="bar" style="width: 40%; background: linear-gradient(90deg,#9c27b0,#4a148c);"></div></div>
+        <div class="bar-row"><span class="bar-label">Fahrenheit (32–212)</span><div class="bar" style="width: 90%; background: linear-gradient(90deg,#ff5722,#bf360c);"></div></div>
+        <div class="bar-row"><span class="bar-label">Kelvin (273–373)</span><div class="bar" style="width: 50%; background: linear-gradient(90deg,#607d8b,#263238);"></div></div>
+      </div>
+
+      <h3>G. Ketelitian & Kesalahan</h3>
+      <ul>
+        <li><b>Ketelitian</b> = kemampuan alat mendeteksi perubahan kecil</li>
+        <li><b>Kesalahan</b> = selisih hasil ukur dengan nilai sebenarnya
+          <ul>
+            <li>Sistematis (alat)</li>
+            <li>Random (manusia)</li>
+            <li>Paralaks (mata tidak tegak lurus)</li>
+          </ul>
+        </li>
+      </ul>
+      <div class="note">💡 <b>Tips:</b> Mata harus tegak lurus dengan skala saat membaca!</div>
+    </div>
+
+    <!-- 4. SIMULASI -->
+    <div id="simulasi" class="section">
+      <h2>🧪 Simulasi Interaktif</h2>
+
+      <div class="sim-box">
+        <h3>🔬 Simulasi Jangka Sorong</h3>
+        <label>Skala Utama (cm): <b id="suVal">2,4</b></label>
+        <input type="range" min="0" max="10" step="0.1" value="2.4" oninput="hitungJS(this.value)">
+        <label>Skala Nonius (0–9): <b id="snVal">7</b></label>
+        <input type="range" min="0" max="9" step="1" value="7" oninput="hitungJS()">
+        <div class="sim-result" id="hasilJS">Hasil: 2,47 cm</div>
+      </div>
+
+      <div class="sim-box">
+        <h3>🌡️ Simulasi Konversi Suhu</h3>
+        <label>Masukkan suhu (°C):</label>
+        <input type="number" id="inputC" value="25" oninput="konversiSuhu()">
+        <div class="sim-result" id="hasilSuhu">25°C = 77°F = 20°R = 298 K</div>
+      </div>
+
+      <div class="sim-box">
+        <h3>⚖️ Simulasi Neraca Ohaus</h3>
+        <label>Lengan 1 (0–200 g): <b id="n1Val">100</b> g</label>
+        <input type="range" min="0" max="200" step="10" value="100" oninput="hitungNeraca()" id="n1">
+        <label>Lengan 2 (0–100 g): <b id="n2Val">50</b> g</label>
+        <input type="range" min="0" max="100" step="10" value="50" oninput="hitungNeraca()" id="n2">
+        <label>Lengan 3 (0–10 g): <b id="n3Val">3</b> g</label>
+        <input type="range" min="0" max="10" step="0.1" value="3" oninput="hitungNeraca()" id="n3">
+        <div class="sim-result" id="hasilNeraca">Total massa: 153,0 g</div>
+      </div>
+
+      <div class="sim-box">
+        <h3>⏱️ Simulasi Stopwatch</h3>
+        <p>Klik tombol untuk mengukur waktu.</p>
+        <button class="btn" onclick="startStop()" id="btnTimer">▶ Mulai</button>
+        <button class="btn yellow" onclick="resetTimer()">⟲ Reset</button>
+        <div class="sim-result" id="hasilTimer">00,00 s</div>
+      </div>
+    </div>
+
+    <!-- 5. KUIS -->
+    <div id="kuis" class="section">
+      <h2>❓ Kuis Penguatan</h2>
+      <p>Pilih jawaban yang paling tepat. Skor otomatis muncul di bawah!</p>
+      <div id="kuis-list"></div>
+      <div class="score-box" id="skorKuis">Skor: 0 / 8</div>
+      <div class="cert-box" id="certBox">
+        <div class="medal">🏆</div>
+        <h3>SERTIFIKAT MINI</h3>
+        <p class="name">Ilmuwan Muda Berprestasi</p>
+        <p class="score-text">Skor Kuis: <b id="certScore">0/8</b></p>
+        <p style="font-size: 0.9rem; color: #555;">Selamat! Kamu telah menguasai materi<br><b>Sistem Pengukuran terhadap Aspek Fisis</b></p>
+        <p class="date" id="certDate"></p>
+      </div>
+      <button class="btn" onclick="resetKuis()">🔄 Ulangi Kuis</button>
+    </div>
+
+    <!-- 6. ASESMEN AKHIR -->
+    <div id="akhir" class="section">
+      <h2>📊 Asesmen Akhir</h2>
+      <p>Jawab dengan singkat & jelas. Tulis jawabanmu di kolom yang tersedia (tersimpan otomatis).</p>
+
+      <div id="akhir-list"></div>
+
+      <button class="btn yellow" onclick="toggleKunci()">🔑 Tampilkan Kunci Jawaban</button>
+      <div id="kunci" style="display:none; margin-top:16px;">
+        <div class="note"><b>Kunci:</b>
+          <ol>
+            <li>Pokok: tidak diturunkan (Panjang, Massa). Turunan: dari pokok (Luas = p×l, Kecepatan = s/t).</li>
+            <li>5,6 + (3 × 0,01) = <b>5,63 cm</b>.</li>
+            <li>Kesalahan paralaks, ketelitian alat berbeda, kondisi benda berubah.</li>
+            <li>40°C = 104°F = 32°R = 313 K.</li>
+            <li>Massa = jumlah materi (kg), sama di mana saja. Berat = gaya gravitasi (N), berubah di bulan.</li>
+            <li>Penggaris (1 mm), Jangka Sorong (0,1 mm), Mikrometer (0,01 mm).</li>
+            <li>Kesalahan karena mata tidak tegak lurus dengan skala. Hindari dengan posisi mata tegak lurus.</li>
+            <li>Agar hasil pengukuran di seluruh dunia sama, dapat dibandingkan, dan bersifat universal.</li>
+          </ol>
+        </div>
+      </div>
+    </div>
+
+    <!-- 7. REFLEKSI -->
+    <div id="refleksi" class="section">
+      <h2>💭 Refleksi</h2>
+      <p style="font-size: 0.9rem; color: #666;">Jawabanmu tersimpan otomatis di browser.</p>
+
+      <h3>A. Menilai Pemahaman Materi</h3>
+      <label class="check-item"><input type="checkbox" class="reflect-check" data-key="paham1"> Aku paham besaran pokok & turunan</label>
+      <label class="check-item"><input type="checkbox" class="reflect-check" data-key="paham2"> Aku bisa membaca jangka sorong</label>
+      <label class="check-item"><input type="checkbox" class="reflect-check" data-key="paham3"> Aku bisa konversi suhu</label>
+      <label class="check-item"><input type="checkbox" class="reflect-check" data-key="paham4"> Aku paham beda massa & berat</label>
+
+      <div class="reflect-item" style="margin-top:12px;">
+        <label>Masih bingung tentang: <span class="saved-badge" id="badge-bingung">✓ Tersimpan</span></label>
+        <input type="text" id="ref-bingung" placeholder="Tulis di sini...">
+      </div>
+
+      <h3>B. Mengekspresikan Perasaan</h3>
+      <div class="emoji-row" id="emoji-row">
+        <button class="emoji-btn" data-emoji="😄" onclick="pilihEmoji(this)">😄</button>
+        <button class="emoji-btn" data-emoji="😐" onclick="pilihEmoji(this)">😐</button>
+        <button class="emoji-btn" data-emoji="😕" onclick="pilihEmoji(this)">😕</button>
+        <button class="emoji-btn" data-emoji="😴" onclick="pilihEmoji(this)">😴</button>
+      </div>
+
+      <div class="reflect-item" style="margin-top:12px;">
+        <label>Bagian paling seru: <span class="saved-badge" id="badge-seru">✓ Tersimpan</span></label>
+        <input type="text" id="ref-seru" placeholder="Contoh: Simulasi jangka sorong">
+      </div>
+      <div class="reflect-item">
+        <label>Bagian paling sulit: <span class="saved-badge" id="badge-sulit">✓ Tersimpan</span></label>
+        <input type="text" id="ref-sulit" placeholder="Contoh: Konversi suhu">
+      </div>
+
+      <h3>C. Motivasi Belajar ke Depan</h3>
+      <div class="reflect-item">
+        <label>Targetku: <span class="saved-badge" id="badge-target">✓ Tersimpan</span></label>
+        <textarea rows="2" id="ref-target" placeholder="Contoh: Aku ingin bisa membaca mikrometer tanpa bantuan."></textarea>
+      </div>
+      <div class="reflect-item">
+        <label>Langkahku: <span class="saved-badge" id="badge-langkah">✓ Tersimpan</span></label>
+        <textarea rows="2" id="ref-langkah" placeholder="Contoh: Latihan 10 soal konversi suhu setiap hari."></textarea>
+      </div>
+      <div class="reflect-item">
+        <label>Pertanyaanku yang belum terjawab: <span class="saved-badge" id="badge-tanya">✓ Tersimpan</span></label>
+        <textarea rows="2" id="ref-tanya" placeholder="Tulis di sini..."></textarea>
+      </div>
+
+      <div class="note">🏁 <b>Penutup:</b> "Mengukur adalah awal dari memahami alam. Tanpa pengukuran, sains hanyalah tebakan." — Selamat bereksperimen, ilmuwan muda! 🔬</div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  // ===== NAVIGASI =====
+  function showSection(id, btn) {
+    document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    document.querySelectorAll('.menu-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  // ===== LOCALSTORAGE HELPER =====
+  const STORAGE_KEY = 'mpi_pengukuran_v1';
+  function getStore() {
+    try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || {}; }
+    catch(e) { return {}; }
+  }
+  function setStore(data) {
+    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(data)); } catch(e) {}
+  }
+
+  function flashBadge(id) {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.classList.add('show');
+    clearTimeout(el._t);
+    el._t = setTimeout(() => el.classList.remove('show'), 1200);
+  }
+
+  // ===== ASESMEN AWAL =====
+  const pertanyaanAwal = [
+    "Apa perbedaan besaran dan satuan?",
+    "Sebutkan 3 alat ukur yang kamu kenal.",
+    "Apa satuan panjang dalam SI?",
+    "Apa itu ketelitian alat ukur?",
+    "Mengapa hasil pengukuran bisa berbeda antar orang?",
+    "Apa yang dimaksud angka penting?",
+    "Bagaimana cara membaca jangka sorong?",
+    "Apa bedanya massa dan berat?",
+    "Apa itu kesalahan pengukuran?",
+    "Alat ukur apa yang paling tepat untuk mengukur diameter kelereng?"
+  ];
+
+  const store = getStore();
+  const listAwal = document.getElementById('awal-list');
+  pertanyaanAwal.forEach((q, i) => {
+    const div = document.createElement('div');
+    div.className = 'self-check';
+    div.innerHTML = `
+      <span>${i+1}. ${q}</span>
+      <div class="tri-btn" data-q="${i}">
+        <button data-v="tahu">Tahu</button>
+        <button data-v="ragu">Ragu</button>
+        <button data-v="tidak">Tidak Tahu</button>
+      </div>`;
+    listAwal.appendChild(div);
+  });
+
+  // Pulihkan pilihan asesmen awal
+  document.querySelectorAll('.tri-btn[data-q]').forEach(group => {
+    const q = group.dataset.q;
+    const saved = store['awal_' + q];
+    if (saved) {
+      group.querySelectorAll('button').forEach(b => {
+        if (b.dataset.v === saved) b.classList.add('selected');
+      });
+    }
+    group.querySelectorAll('button').forEach(btn => {
+      btn.addEventListener('click', () => {
+        group.querySelectorAll('button').forEach(b => b.classList.remove('selected'));
+        btn.classList.add('selected');
+        const s = getStore();
+        s['awal_' + q] = btn.dataset.v;
+        setStore(s);
+      });
+    });
+  });
+
+  // ===== KUIS =====
+  const kuisData = [
+    { q: "Satuan SI untuk massa adalah...", o: ["gram", "kilogram", "newton", "pon"], a: 1 },
+    { q: "Alat ukur paling teliti untuk diameter kelereng:", o: ["penggaris", "jangka sorong", "mikrometer sekrup", "meteran"], a: 2 },
+    { q: "Hasil baca: skala utama 3,2 cm, nonius 4 → ...", o: ["3,24 cm", "3,42 cm", "3,4 cm", "32,4 cm"], a: 0 },
+    { q: "Massa benda sama di mana saja, tetapi berat berubah karena...", o: ["suhu", "gravitasi", "tekanan", "volume"], a: 1 },
+    { q: "Kesalahan karena mata tidak tegak lurus disebut...", o: ["sistematis", "paralaks", "random", "kalibrasi"], a: 1 },
+    { q: "25°C = ... K", o: ["298", "273", "250", "325"], a: 0 },
+    { q: "1 kg kapas vs 1 kg besi:", o: ["besi lebih berat", "kapas lebih berat", "sama", "tergantung wadah"], a: 2 },
+    { q: "Ketelitian mikrometer sekrup:", o: ["1 mm", "0,1 mm", "0,01 mm", "0,001 mm"], a: 2 }
+  ];
+
+  let skor = 0;
+  let sudahSertifikat = false;
+  const kuisList = document.getElementById('kuis-list');
+
+  function renderKuis() {
+    kuisList.innerHTML = '';
+    skor = 0;
+    document.getElementById('skorKuis').classList.remove('show');
+    document.getElementById('certBox').classList.remove('show');
+    sudahSertifikat = false;
+    kuisData.forEach((item, i) => {
+      const div = document.createElement('div');
+      div.className = 'quiz-q';
+      div.innerHTML = `<p>${i+1}. ${item.q}</p>`;
+      item.o.forEach((opt, j) => {
+        const btn = document.createElement('button');
+        btn.className = 'quiz-opt';
+        btn.textContent = String.fromCharCode(97+j) + ') ' + opt;
+        btn.onclick = () => jawabKuis(btn, i, j, div);
+        div.appendChild(btn);
+      });
+      const fb = document.createElement('div');
+      fb.className = 'feedback';
+      div.appendChild(fb);
+      kuisList.appendChild(div);
+    });
+  }
+
+  function jawabKuis(btn, qIdx, optIdx, container) {
+    const semuaBtn = container.querySelectorAll('.quiz-opt');
+    semuaBtn.forEach(b => b.disabled = true);
+    const fb = container.querySelector('.feedback');
+    if (optIdx === kuisData[qIdx].a) {
+      btn.classList.add('correct');
+      fb.textContent = '✅ Benar!';
+      fb.className = 'feedback show ok';
+      skor++;
+    } else {
+      btn.classList.add('wrong');
+      semuaBtn[kuisData[qIdx].a].classList.add('correct');
+      fb.textContent = '❌ Belum tepat. Jawaban benar: ' + String.fromCharCode(97+kuisData[qIdx].a) + ') ' + kuisData[qIdx].o[kuisData[qIdx].a];
+      fb.className = 'feedback show no';
+    }
+    const skorBox = document.getElementById('skorKuis');
+    skorBox.textContent = `Skor: ${skor} / ${kuisData.length}`;
+    skorBox.classList.add('show');
+
+    // Simpan skor
+    const s = getStore();
+    s.skorKuis = skor;
+    setStore(s);
+
+    // Cek sertifikat
+    const semuaTerjawab = document.querySelectorAll('#kuis-list .quiz-opt:disabled').length === kuisData.length * 4;
+    if (semuaTerjawab && skor >= 7 && !sudahSertifikat) {
+      tampilkanSertifikat(skor);
+      sudahSertifikat = true;
+    }
+  }
+
+  function tampilkanSertifikat(skorVal) {
+    const box = document.getElementById('certBox');
+    document.getElementById('certScore').textContent = `${skorVal} / ${kuisData.length}`;
+    const now = new Date();
+    const bulan = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
+    document.getElementById('certDate').textContent =
+      `Diberikan pada ${now.getDate()} ${bulan[now.getMonth()]} ${now.getFullYear()}`;
+    box.classList.add('show');
+    setTimeout(() => box.scrollIntoView({ behavior: 'smooth', block: 'center' }), 200);
+  }
+
+  function resetKuis() {
+    renderKuis();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+  renderKuis();
+
+  // ===== SIMULASI =====
+  function hitungJS() {
+    const su = parseFloat(document.querySelector('#simulasi input[type=range]').value);
+    const sn = parseInt(document.querySelectorAll('#simulasi input[type=range]')[1].value);
+    document.getElementById('suVal').textContent = su.toFixed(1).replace('.', ',');
+    document.getElementById('snVal').textContent = sn;
+    const hasil = su + (sn * 0.01);
+    document.getElementById('hasilJS').textContent = `Hasil: ${hasil.toFixed(2).replace('.', ',')} cm`;
+  }
+  hitungJS();
+
+  function konversiSuhu() {
+    const c = parseFloat(document.getElementById('inputC').value) || 0;
+    const f = (c * 9/5) + 32;
+    const r = c * 4/5;
+    const k = c + 273;
+    document.getElementById('hasilSuhu').textContent =
+      `${c}°C = ${f.toFixed(1)}°F = ${r.toFixed(1)}°R = ${k.toFixed(1)} K`;
+  }
+  konversiSuhu();
+
+  function hitungNeraca() {
+    const n1 = parseFloat(document.getElementById('n1').value);
+    const n2 = parseFloat(document.getElementById('n2').value);
+    const n3 = parseFloat(document.getElementById('n3').value);
+    document.getElementById('n1Val').textContent = n1;
+    document.getElementById('n2Val').textContent = n2;
+    document.getElementById('n3Val').textContent = n3;
+    const total = n1 + n2 + n3;
+    document.getElementById('hasilNeraca').textContent = `Total massa: ${total.toFixed(1).replace('.', ',')} g`;
+  }
+  hitungNeraca();
+
+  let timerInterval = null;
+  let timerMs = 0;
+  let timerRunning = false;
+
+  function startStop() {
+    const btn = document.getElementById('btnTimer');
+    if (!timerRunning) {
+      timerRunning = true;
+      btn.textContent = '⏸ Stop';
+      const start = Date.now() - timerMs;
+      timerInterval = setInterval(() => {
+        timerMs = Date.now() - start;
+        tampilTimer();
+      }, 10);
+    } else {
+      timerRunning = false;
+      btn.textContent = '▶ Mulai';
+      clearInterval(timerInterval);
+    }
+  }
+
+  function resetTimer() {
+    clearInterval(timerInterval);
+    timerRunning = false;
+    timerMs = 0;
+    document.getElementById('btnTimer').textContent = '▶ Mulai';
+    tampilTimer();
+  }
+
+  function tampilTimer() {
+    const total = Math.floor(timerMs / 10);
+    const detik = Math.floor(total / 100);
+    const sisa = total % 100;
+    document.getElementById('hasilTimer').textContent =
+      `${String(detik).padStart(2,'0')},${String(sisa).padStart(2,'0')} s`;
+  }
+  tampilTimer();
+
+  // ===== ASESMEN AKHIR =====
+  const soalAkhir = [
+    "Jelaskan perbedaan besaran pokok dan besaran turunan beserta 2 contoh masing-masing!",
+    "Sebuah benda diukur dengan jangka sorong: skala utama 5,6 cm, nonius 3. Berapa hasilnya?",
+    "Mengapa hasil pengukuran dua orang bisa berbeda? Sebutkan 2 penyebab!",
+    "Konversikan 40°C ke Fahrenheit, Reaumur, dan Kelvin!",
+    "Mengapa massa berbeda dengan berat? Beri contoh!",
+    "Sebutkan 3 alat ukur panjang dan ketelitiannya!",
+    "Apa yang dimaksud kesalahan paralaks dan bagaimana menghindarinya?",
+    "Mengapa satuan SI penting dalam pengukuran ilmiah?"
+  ];
+
+  const akhirList = document.getElementById('akhir-list');
+  soalAkhir.forEach((q, i) => {
+    const div = document.createElement('div');
+    div.className = 'reflect-item';
+    div.innerHTML = `
+      <label>${i+1}. ${q} <span class="saved-badge" id="badge-akhir-${i}">✓ Tersimpan</span></label>
+      <textarea rows="2" id="akhir-${i}" placeholder="Tulis jawabanmu..."></textarea>`;
+    akhirList.appendChild(div);
+  });
+
+  // Muat & simpan jawaban asesmen akhir
+  soalAkhir.forEach((_, i) => {
+    const ta = document.getElementById('akhir-' + i);
+    const saved = store['akhir_' + i];
+    if (saved) ta.value = saved;
+    ta.addEventListener('input', () => {
+      const s = getStore();
+      s['akhir_' + i] = ta.value;
+      setStore(s);
+      flashBadge('badge-akhir-' + i);
+    });
+  });
+
+  function toggleKunci() {
+    const k = document.getElementById('kunci');
+    k.style.display = k.style.display === 'none' ? 'block' : 'none';
+  }
+
+  // ===== REFLEKSI =====
+  // Checkbox pemahaman
+  document.querySelectorAll('.reflect-check').forEach(cb => {
+    const key = 'ref_' + cb.dataset.key;
+    if (store[key]) cb.checked = true;
+    cb.addEventListener('change', () => {
+      const s = getStore();
+      s[key] = cb.checked;
+      setStore(s);
+    });
+  });
+
+  // Input teks refleksi
+  const reflectMap = {
+    'ref-bingung': 'badge-bingung',
+    'ref-seru': 'badge-seru',
+    'ref-sulit': 'badge-sulit',
+    'ref-target': 'badge-target',
+    'ref-langkah': 'badge-langkah',
+    'ref-tanya': 'badge-tanya'
+  };
+
+  Object.keys(reflectMap).forEach(id => {
+    const el = document.getElementById(id);
+    const badge = reflectMap[id];
+    if (store[id]) el.value = store[id];
+    el.addEventListener('input', () => {
+      const s = getStore();
+      s[id] = el.value;
+      setStore(s);
+      flashBadge(badge);
+    });
+  });
+
+  // Emoji
+  const savedEmoji = store['ref_emoji'];
+  if (savedEmoji) {
+    document.querySelectorAll('.emoji-btn').forEach(b => {
+      if (b.dataset.emoji === savedEmoji) b.classList.add('selected');
+    });
+  }
+
+  function pilihEmoji(btn) {
+    document.querySelectorAll('.emoji-btn').forEach(b => b.classList.remove('selected'));
+    btn.classList.add('selected');
+    const s = getStore();
+    s['ref_emoji'] = btn.dataset.emoji;
+    setStore(s);
+  }
+
+  // ===== EFEK ANIMASI BAR SAAT SECTION MATERI DIBUKA =====
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        const bar = e.target;
+        const w = bar.style.width;
+        bar.style.width = '0';
+        setTimeout(() => { bar.style.width = w; }, 100);
+      }
+    });
+  }, { threshold: 0.3 });
+
+  document.querySelectorAll('.bar').forEach(b => observer.observe(b));
+
+  // Restore emoji pilihan tadi saat halaman dibuka (sudah di atas)
+</script>
+</body>
+</html>
